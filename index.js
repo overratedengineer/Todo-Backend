@@ -6,7 +6,8 @@ const bcrypt = require('bcrypt');
 const {Usermodel,Todomodel} = require("./db");
 const { boolean } = require('webidl-conversions');
 const app = express()
-mongoose.connect('mongodb+srv://pulkitdarky:Park1290%40@cluster0.mrsqxzv.mongodb.net/todos-1');
+mongoose.connect('');
+
 app.use(express.json()); 
 
 app.post('/signup',async (req,res) =>{
