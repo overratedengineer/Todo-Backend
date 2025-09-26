@@ -2,18 +2,20 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 const jwt = require('jsonwebtoken');
 const jwts = "hello my name is pulkit";
+const bcrypt = require('bcrypt');
 const {Usermodel,Todomodel} = require("./db");
 const { boolean } = require('webidl-conversions');
 const app = express()
-mongoose.connect('mongodb+srv://use your id and password.mongodb.net/todo-app');
+mongoose.connect('mongodb+srv://pulkitdarky:Park1290%40@cluster0.mrsqxzv.mongodb.net/todos-1');
 app.use(express.json()); 
 
 app.post('/signup',async (req,res) =>{
    const username = req.body.username
    const password = req.body.password
+   const epass = await bcrypt.hash(password,5);
   await Usermodel.create({
     username : username,
-    password : password
+    password : epass
    }) 
 
    res.status(200).json({
@@ -25,14 +27,16 @@ app.post('/signin',async (req,res) =>{
     const username = req.body.username
     const password = req.body.password
     const user = await Usermodel.findOne({
-        username:username ,
-        password : password
+        username:username 
     })
-    if (user) {
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+  }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (isMatch) {
         const token = jwt.sign({
             id: user._id
         },jwts)
-
         res.json({
             token : token
         })
